@@ -1,42 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GTA V Style Site</title>
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background: #000;
-  }
-  canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-  .blur-filter {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(12px) brightness(1.2) saturate(1.8) contrast(1.3);
-    z-index: 3;
-    pointer-events: none;
-  }
-</style>
-</head>
-<body>
-<canvas id="lights"></canvas>
-<canvas id="shapes"></canvas>
-<div class="blur-filter"></div>
-<script>
 const shapeCanvas = document.getElementById('shapes');
 const shapeCtx = shapeCanvas.getContext('2d');
 const lightCanvas = document.getElementById('lights');
@@ -49,7 +10,6 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// CORES VIBRANTES DAS FORMAS
 const COLORS = [
   '#FF3CAC', '#784BA0', '#2B86C5', '#FFB75E', '#ED8F03',
   '#23A6D5', '#23D5AB', '#EE7752', '#E73C7E', '#23A6D5'
@@ -66,10 +26,12 @@ class Shape {
     this.color = COLORS[Math.floor(Math.random() * COLORS.length)];
     this.spin = (Math.random() - 0.5) * 0.05;
   }
+  
   update() {
     this.y -= this.speed;
     this.rotation += this.spin;
   }
+
   draw() {
     shapeCtx.save();
     shapeCtx.translate(this.x, this.y);
@@ -90,11 +52,8 @@ class Shape {
   }
 }
 
-// LUZES DIFUSAS (EFEITO GTA V)
 class Light {
-  constructor() {
-    this.reset();
-  }
+  constructor() { this.reset(); }
   reset() {
     this.x = Math.random() * lightCanvas.width;
     this.y = Math.random() * lightCanvas.height;
@@ -104,6 +63,7 @@ class Light {
     this.fadeSpeed = Math.random() * 0.02 + 0.01;
     this.growing = true;
   }
+
   update() {
     if (this.growing) {
       this.alpha += this.fadeSpeed;
@@ -113,6 +73,7 @@ class Light {
       if (this.alpha <= 0) this.reset();
     }
   }
+
   draw() {
     const gradient = lightCtx.createRadialGradient(this.x, this.y, 0, this.x, this.y, this.size);
     gradient.addColorStop(0, this.color.replace('0.25', this.alpha.toFixed(2)));
@@ -132,7 +93,6 @@ function spawnShape() {
 }
 
 function animate() {
-  // Luzes
   lightCtx.clearRect(0, 0, lightCanvas.width, lightCanvas.height);
   lightCtx.globalCompositeOperation = 'screen';
   lights.forEach(light => {
@@ -140,7 +100,6 @@ function animate() {
     light.draw();
   });
 
-  // Formas
   shapeCtx.clearRect(0, 0, shapeCanvas.width, shapeCanvas.height);
   shapes.forEach((s, i) => {
     s.update();
@@ -153,6 +112,3 @@ function animate() {
 
 setInterval(spawnShape, 200);
 animate();
-</script>
-</body>
-</html>
